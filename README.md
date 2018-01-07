@@ -1,6 +1,6 @@
 # twitter-streamer
 
-Simple script using [Tweepy](http://www.tweepy.org/) python library, configurable by ini config file.
+Simple script using [Tweepy](http://www.tweepy.org/) python library for streaming tweets, configurable by ini config file. Tweets are stored in a csv file and printed to the `stdout`.
 
 ## Requirements
 
