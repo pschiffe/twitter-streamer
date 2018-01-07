@@ -1,0 +1,10 @@
+[DEFAULT]
+consumer_key = somekey
+consumer_secret = somekey
+access_token = somekey
+access_token_secret = somekey
+
+tweets_csv_path = data.csv
+
+filter_track = sample,other keyword
+filter_lang = en,de
