@@ -18,11 +18,12 @@ class MyStreamListener(tweepy.StreamListener):
         # store tweets in a csv file and print them to stdout
         with open(self._tweets_csv_path, mode='a') as csv:
             # https://developer.twitter.com/en/docs/tweets/data-dictionary/overview/tweet-object
+            created_at = status.created_at if status.created_at else ''
             user_name = status.user.name.replace('"', "'") if status.user and status.user.name else ''
             place = status.user.location.replace('"', "'") if status.user and status.user.location else ''
             coord = ','.join(["%f" % n for n in status.coordinates['coordinates']]) if status.coordinates and status.coordinates['coordinates'] else ''
             text = status.text.replace('"', "'") if status.text else ''
-            csv.write('"%s","%s","%s","%s"\r\n' % (user_name, place, coord, text))
+            csv.write('"%s","%s","%s","%s","%s"\r\n' % (created_at, user_name, place, coord, text))
         print(status.text)
 
 
