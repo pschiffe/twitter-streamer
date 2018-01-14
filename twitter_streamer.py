@@ -22,7 +22,7 @@ class MyStreamListener(tweepy.StreamListener):
             user_name = status.user.name.replace('"', "'") if status.user and status.user.name else ''
             place = status.user.location.replace('"', "'") if status.user and status.user.location else ''
             coord = ','.join(["%f" % n for n in status.coordinates['coordinates']]) if status.coordinates and status.coordinates['coordinates'] else ''
-            text = status.text.replace('"', "'") if status.text else ''
+            text = status.text.replace('"', "'").replace('\n', ' || ') if status.text else ''
             csv.write('"%s","%s","%s","%s","%s"\r\n' % (created_at, user_name, place, coord, text))
         print(status.text)
 
