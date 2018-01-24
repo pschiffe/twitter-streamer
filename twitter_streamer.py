@@ -23,11 +23,18 @@ class MyStreamListener(tweepy.StreamListener):
             place = status.user.location.replace('"', "'") if status.user and status.user.location else ''
             coord = ','.join(["%f" % n for n in status.coordinates['coordinates']]) if status.coordinates and status.coordinates['coordinates'] else ''
             try:
-                text = status.extended_tweet['full_text'].replace('"', "'").replace('\n', ' || ')
+                text = status.extended_tweet['full_text']
             except AttributeError:
-                text = status.text.replace('"', "'").replace('\n', ' || ') if status.text else ''
+                try:
+                    text = 'RT @{0}: {1}'.format(status.retweeted_status.user.screen_name, status.retweeted_status.extended_tweet['full_text'])
+                except AttributeError:
+                    try:
+                        text = 'RT @{0}: {1}'.format(status.retweeted_status.user.screen_name, status.retweeted_status.text)
+                    except AttributeError:
+                        text = status.text if status.text else ''
+            text = text.replace('"', "'").replace('\n', ' || ')
+            print(text)
             csv.write('"%s","%s","%s","%s","%s"\r\n' % (created_at, user_name, place, coord, text))
-        print(status.text)
 
 
 def main():
