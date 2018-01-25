@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
+import json
 import tweepy
 import configparser
 
@@ -18,23 +19,52 @@ class MyStreamListener(tweepy.StreamListener):
         # store tweets in a csv file and print them to stdout
         with open(self._tweets_csv_path, mode='a') as csv:
             # https://developer.twitter.com/en/docs/tweets/data-dictionary/overview/tweet-object
-            created_at = status.created_at if status.created_at else ''
-            user_name = status.user.name.replace('"', "'") if status.user and status.user.name else ''
-            place = status.user.location.replace('"', "'") if status.user and status.user.location else ''
-            coord = ','.join(["%f" % n for n in status.coordinates['coordinates']]) if status.coordinates and status.coordinates['coordinates'] else ''
             try:
-                text = status.extended_tweet['full_text']
+                tid = status.id_str
+            except AttributeError:
+                tid = ''
+            try:
+                created_at = status.created_at
+            except AttributeError:
+                created_at = ''
+            try:
+                user_name = status.user.screen_name.replace('"', "'")
+            except AttributeError:
+                user_name = ''
+            try:
+                place = status.place.full_name.replace('"', "'")
+            except AttributeError:
+                place = ''
+            try:
+                coord = ','.join(map(str, status.coordinates.coordinates))
+            except AttributeError:
+                coord = ''
+            try:
+                polygon0 = ','.join(map(str, status.place.bounding_box.coordinates[0][0]))
+                polygon1 = ','.join(map(str, status.place.bounding_box.coordinates[0][1]))
+                polygon2 = ','.join(map(str, status.place.bounding_box.coordinates[0][2]))
+                polygon3 = ','.join(map(str, status.place.bounding_box.coordinates[0][3]))
+            except AttributeError:
+                polygon0 = ''
+                polygon1 = ''
+                polygon2 = ''
+                polygon3 = ''
+            try:
+                text = status.extended_tweet.full_text
             except AttributeError:
                 try:
-                    text = 'RT @{0}: {1}'.format(status.retweeted_status.user.screen_name, status.retweeted_status.extended_tweet['full_text'])
+                    text = 'RT @{0}: {1}'.format(status.retweeted_status.user.screen_name, status.retweeted_status.extended_tweet.full_text)
                 except AttributeError:
                     try:
                         text = 'RT @{0}: {1}'.format(status.retweeted_status.user.screen_name, status.retweeted_status.text)
                     except AttributeError:
                         text = status.text if status.text else ''
             text = text.replace('"', "'").replace('\n', ' || ')
+            csv_row = '"{0}","{1}","{2}","{3}","{4}","{5}","{6}","{7}","{8}","{9}"\r\n'.format(tid, created_at, user_name, coord, place, polygon0, polygon1, polygon2, polygon3, text)
             print(text)
-            csv.write('"%s","%s","%s","%s","%s"\r\n' % (created_at, user_name, place, coord, text))
+            #print(csv_row)
+            #print(json.dumps(status._json, indent=4) + '\n')
+            csv.write(csv_row)
 
 
 def main():
