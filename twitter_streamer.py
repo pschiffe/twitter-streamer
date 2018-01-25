@@ -50,10 +50,10 @@ class MyStreamListener(tweepy.StreamListener):
                 polygon2 = ''
                 polygon3 = ''
             try:
-                text = status.extended_tweet.full_text
+                text = status.extended_tweet['full_text']
             except AttributeError:
                 try:
-                    text = 'RT @{0}: {1}'.format(status.retweeted_status.user.screen_name, status.retweeted_status.extended_tweet.full_text)
+                    text = 'RT @{0}: {1}'.format(status.retweeted_status.user.screen_name, status.retweeted_status.extended_tweet['full_text'])
                 except AttributeError:
                     try:
                         text = 'RT @{0}: {1}'.format(status.retweeted_status.user.screen_name, status.retweeted_status.text)
