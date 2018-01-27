@@ -32,6 +32,10 @@ class MyStreamListener(tweepy.StreamListener):
             except AttributeError:
                 user_name = ''
             try:
+                user_place = status.user.location.replace('"', "'")
+            except AttributeError:
+                user_place = ''
+            try:
                 place = status.place.full_name.replace('"', "'")
             except AttributeError:
                 place = ''
@@ -60,7 +64,7 @@ class MyStreamListener(tweepy.StreamListener):
                     except AttributeError:
                         text = status.text if status.text else ''
             text = text.replace('"', "'").replace('\n', ' || ')
-            csv_row = '"{0}","{1}","{2}","{3}","{4}","{5}","{6}","{7}","{8}","{9}"\r\n'.format(tid, created_at, user_name, coord, place, polygon0, polygon1, polygon2, polygon3, text)
+            csv_row = '"{0}","{1}","{2}","{3}","{4}","{5}","{6}","{7}","{8}","{9}","{10}"\r\n'.format(tid, created_at, user_name, user_place, coord, place, polygon0, polygon1, polygon2, polygon3, text)
             print(text)
             #print(csv_row)
             #print(json.dumps(status._json, indent=4) + '\n')
