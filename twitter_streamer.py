@@ -40,14 +40,14 @@ class MyStreamListener(tweepy.StreamListener):
             except AttributeError:
                 place = ''
             try:
-                coord = ','.join(map(str, status.coordinates.coordinates))
+                coord = ','.join(map(str, status.coordinates.coordinates).reverse())
             except AttributeError:
                 coord = ''
             try:
-                polygon0 = ','.join(map(str, status.place.bounding_box.coordinates[0][0]))
-                polygon1 = ','.join(map(str, status.place.bounding_box.coordinates[0][1]))
-                polygon2 = ','.join(map(str, status.place.bounding_box.coordinates[0][2]))
-                polygon3 = ','.join(map(str, status.place.bounding_box.coordinates[0][3]))
+                polygon0 = ','.join(map(str, status.place.bounding_box.coordinates[0][0]).reverse())
+                polygon1 = ','.join(map(str, status.place.bounding_box.coordinates[0][1]).reverse())
+                polygon2 = ','.join(map(str, status.place.bounding_box.coordinates[0][2]).reverse())
+                polygon3 = ','.join(map(str, status.place.bounding_box.coordinates[0][3]).reverse())
             except AttributeError:
                 polygon0 = ''
                 polygon1 = ''
