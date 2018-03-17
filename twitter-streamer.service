@@ -1,0 +1,12 @@
+[Unit]
+Description=Twitter Streamer
+
+[Service]
+User=some-user
+Group=some-user
+WorkingDirectory=/home/some-user/twitter-streamer
+ExecStart=/home/some-user/twitter-streamer/twitter_streamer.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
