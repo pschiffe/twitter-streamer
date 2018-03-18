@@ -32,7 +32,7 @@ class MyStreamListener(tweepy.StreamListener):
             except AttributeError:
                 user_name = ''
             try:
-                user_place = status.user.location.replace('"', "'")
+                user_place = status.user.location.replace('"', "'").replace('\n', ' || ').replace('\r', '')
             except AttributeError:
                 user_place = ''
             try:
@@ -40,14 +40,14 @@ class MyStreamListener(tweepy.StreamListener):
             except AttributeError:
                 place = ''
             try:
-                coord = ','.join(map(str, status.coordinates.coordinates).reverse())
+                coord = ','.join(reversed(list(map(str, status.coordinates.coordinates))))
             except AttributeError:
                 coord = ''
             try:
-                polygon0 = ','.join(map(str, status.place.bounding_box.coordinates[0][0]).reverse())
-                polygon1 = ','.join(map(str, status.place.bounding_box.coordinates[0][1]).reverse())
-                polygon2 = ','.join(map(str, status.place.bounding_box.coordinates[0][2]).reverse())
-                polygon3 = ','.join(map(str, status.place.bounding_box.coordinates[0][3]).reverse())
+                polygon0 = ','.join(reversed(list(map(str, status.place.bounding_box.coordinates[0][0]))))
+                polygon1 = ','.join(reversed(list(map(str, status.place.bounding_box.coordinates[0][1]))))
+                polygon2 = ','.join(reversed(list(map(str, status.place.bounding_box.coordinates[0][2]))))
+                polygon3 = ','.join(reversed(list(map(str, status.place.bounding_box.coordinates[0][3]))))
             except AttributeError:
                 polygon0 = ''
                 polygon1 = ''
@@ -55,15 +55,23 @@ class MyStreamListener(tweepy.StreamListener):
                 polygon3 = ''
             try:
                 text = status.extended_tweet['full_text']
+                for url in status.extended_tweet.entities['urls']:
+                    text = text.replace(url['url'], url['expanded_url'])
             except AttributeError:
                 try:
                     text = 'RT @{0}: {1}'.format(status.retweeted_status.user.screen_name, status.retweeted_status.extended_tweet['full_text'])
+                    for url in status.retweeted_status.extended_tweet.entities['urls']:
+                        text = text.replace(url['url'], url['expanded_url'])
                 except AttributeError:
                     try:
                         text = 'RT @{0}: {1}'.format(status.retweeted_status.user.screen_name, status.retweeted_status.text)
+                        for url in status.retweeted_status.entities['urls']:
+                            text = text.replace(url['url'], url['expanded_url'])
                     except AttributeError:
                         text = status.text if status.text else ''
-            text = text.replace('"', "'").replace('\n', ' || ')
+                        for url in status.entities['urls']:
+                            text = text.replace(url['url'], url['expanded_url'])
+            text = text.replace('"', "'").replace('\n', ' || ').replace('\r', '')
             csv_row = '"{0}","{1}","{2}","{3}","{4}","{5}","{6}","{7}","{8}","{9}","{10}"\r\n'.format(tid, created_at, user_name, user_place, coord, place, polygon0, polygon1, polygon2, polygon3, text)
             print(text)
             #print(csv_row)
