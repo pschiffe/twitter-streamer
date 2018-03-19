@@ -37,8 +37,10 @@ class MyStreamListener(tweepy.StreamListener):
                 user_place = ''
             try:
                 place = status.place.full_name.replace('"', "'")
+                place_obj = self.api.geo_id(status.place.id)
+                centroid = ','.join(reversed(list(map(str, place_obj.centroid))))
             except AttributeError:
-                place = ''
+                return
             try:
                 coord = ','.join(reversed(list(map(str, status.coordinates.coordinates))))
             except AttributeError:
@@ -72,7 +74,7 @@ class MyStreamListener(tweepy.StreamListener):
                         for url in status.entities['urls']:
                             text = text.replace(url['url'], url['expanded_url'])
             text = text.replace('"', "'").replace('\n', ' || ').replace('\r', '')
-            csv_row = '"{0}","{1}","{2}","{3}","{4}","{5}","{6}","{7}","{8}","{9}","{10}"\r\n'.format(tid, created_at, user_name, user_place, coord, place, polygon0, polygon1, polygon2, polygon3, text)
+            csv_row = '"{0}","{1}","{2}","{3}","{4}","{5}","{6}","{7}","{8}","{9}","{10}","{11}"\r\n'.format(tid, created_at, user_name, user_place, coord, centroid, place, polygon0, polygon1, polygon2, polygon3, text)
             print(text)
             #print(csv_row)
             #print(json.dumps(status._json, indent=4) + '\n')
@@ -88,7 +90,7 @@ def main():
 
     api = tweepy.API(auth)
 
-    myStreamListener = MyStreamListener(tweets_csv_path=config['DEFAULT']['tweets_csv_path'])
+    myStreamListener = MyStreamListener(api=api, tweets_csv_path=config['DEFAULT']['tweets_csv_path'])
     myStream = tweepy.Stream(auth=api.auth, listener=myStreamListener)
 
     try:
