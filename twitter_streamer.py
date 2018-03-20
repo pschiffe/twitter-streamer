@@ -88,7 +88,7 @@ def main():
     auth = tweepy.OAuthHandler(config['DEFAULT']['consumer_key'], config['DEFAULT']['consumer_secret'])
     auth.set_access_token(config['DEFAULT']['access_token'], config['DEFAULT']['access_token_secret'])
 
-    api = tweepy.API(auth)
+    api = tweepy.API(auth_handler=auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
     myStreamListener = MyStreamListener(api=api, tweets_csv_path=config['DEFAULT']['tweets_csv_path'])
     myStream = tweepy.Stream(auth=api.auth, listener=myStreamListener)
